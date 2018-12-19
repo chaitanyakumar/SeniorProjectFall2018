@@ -24,7 +24,7 @@ namespace Inventory.Controllers
             }
             return View(shippers);
         }
-
+        
         public ActionResult PartialShippers()
         {
             List<Shipper> shippers = new List<Shipper>();
@@ -45,6 +45,45 @@ namespace Inventory.Controllers
             }
 
             return View(shipper);
+        }
+
+        [HttpPost]
+        public ActionResult Shipper(Shipper ship)
+        {
+            if (ModelState.IsValid)
+            {
+                using (MySqlConnection conn = DBUtils.GetConnection())
+                {
+                    ShipperRepository repo = new ShipperRepository(conn);
+                    repo.Save(ship);
+                }
+
+                return RedirectToAction("Shippers");
+            }
+            return View(ship);
+        }
+
+        public ActionResult CreateShipper()
+        {
+            Shipper ship = new Shipper();
+
+            return View(ship);
+        }
+
+        [HttpPost]
+        public ActionResult CreateShipper(Shipper ship)
+        {
+            if (ModelState.IsValid)
+            {
+                using (MySqlConnection conn = DBUtils.GetConnection())
+                {
+                    ShipperRepository repo = new ShipperRepository(conn);
+                    repo.Save(ship);
+                }
+
+                return RedirectToAction("Shippers");
+            }
+            return View(ship);
         }
 
         public ActionResult Suppliers()
@@ -81,16 +120,71 @@ namespace Inventory.Controllers
             return View(customers);
         }
 
-        public ActionResult Customer(Int32 id)
+        public ActionResult Customer(string id)
         {
             Customer customer;
             using (MySqlConnection conn = DBUtils.GetConnection())
             {
                 CustomerRepository repo = new CustomerRepository(conn);
-                customer = repo.GetById(id.ToString());
+                customer = repo.GetById(id);
             }
 
             return View(customer);
+        }
+
+        public ActionResult Products()
+        {
+            List<Product> products = new List<Product>();
+            using (MySqlConnection conn = DBUtils.GetConnection())
+            {
+                ProductRepository repo = new ProductRepository(conn);
+                products = repo.GetAll().ToList<Product>();
+            }
+            return View(products);
+        }
+
+        public ActionResult Product(Int32 id)
+        {
+            Product product;
+            using (MySqlConnection conn = DBUtils.GetConnection())
+            {
+                ProductRepository repo = new ProductRepository(conn);
+                product = repo.GetById(id.ToString());
+            }
+
+            EditProduct prod = new EditProduct();
+            prod.ProductID = product.ProductID;
+            prod.ProductName = product.ProductName;
+            prod.UnitsInStock = product.UnitsInStock;
+            prod.UnitsOnOrder = product.UnitsOnOrder;
+            prod.ActiveYN = product.ActiveYN;
+
+            return View(prod);
+        }
+
+        [HttpPost]
+        public ActionResult Product(EditProduct prod)
+        {
+            if (ModelState.IsValid)
+            {
+                using (MySqlConnection conn = DBUtils.GetConnection())
+                {
+                    Product product = new Product();
+
+                    product.ProductID = prod.ProductID;
+                    product.ProductName = prod.ProductName;
+                    product.UnitsInStock = prod.UnitsInStock;
+                    product.UnitsOnOrder = prod.UnitsOnOrder;
+                    product.ActiveYN = prod.ActiveYN;
+
+                    ProductRepository repo = new ProductRepository(conn);
+                    repo.Save(product);
+                }
+
+                return RedirectToAction("Products");
+            }
+
+            return View(prod);
         }
     }
 }

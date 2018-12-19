@@ -43,4 +43,19 @@ namespace Inventory.Models
         [Display(Name = "Units in Stock")]
         public short UnitsInStock { get; set; }
     }
+
+    public class EditProduct
+    {
+        [ScaffoldColumn(false)]
+        public int ProductID { get; set; }
+        [Display(Name = "Name")]
+        public string ProductName { get; set; }
+        [Display(Name = "Units in Stock")]
+        public short UnitsInStock { get; set; }
+        [Display(Name = "Units on Order")]
+        public short UnitsOnOrder { get; set; }
+        [Display(Name = "Active")]
+        public string ActiveYN { get; set; }
+    }
+
 }

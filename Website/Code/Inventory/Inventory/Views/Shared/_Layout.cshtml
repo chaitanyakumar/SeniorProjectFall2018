@@ -6,11 +6,46 @@
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/popper")
+    @Scripts.Render("~/bundles/bootstrap")
+    <style type="text/css">
+        .search-container {
+            float: left;
+        }
+
+            .search-container button {
+                float: right;
+                padding: 6px 10px;
+                margin-right: 16px;
+                background: #ddd;
+                border: none;
+                cursor: pointer;
+            }
+
+                .search-container button:hover {
+                    background: #ccc;
+                }
+
+            .search-container input[type=text] {
+                padding: 6px;
+                border: none;
+            }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
-        <a class="navbar-brand" href="#">Inventory Management System</a>
+        <a class="navbar-brand" href="#">Inventory Management System</a>&nbsp;&nbsp;Welcome
+        @{Inventory.Models.Users usr = (Inventory.Models.Users)Session["User"]; }
+        @usr.UserName.ToUpper()
         <div>
+            <div class="search-container">
+                <form method="post" action="@Url.Action("Search", "Home")">
+                    <input type="text" placeholder="Search.." name="searchString">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+            &nbsp;&nbsp;
             <a href="#" onclick="location.href='@Url.Action("Logout", "Account")'"><i class="fa fa-power-off fa-2x"></i></a>
         </div>
     </nav>
@@ -21,17 +56,24 @@
                     <i class="fa fa-home fa-2x"></i>
                 </a>
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="location.href='@Url.Action("Administrator", "Administrators")'" role="button">Administration</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Maintenance</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Shippers", "Maintenance")'">Shipper</a>
-                            <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Suppliers", "Maintenance")'">Supplier</a>
-                            <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Customers", "Maintenance")'">Customer</a>
-                        </div>
-                    </li>
+                    @if (usr.RoleID == 1)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="location.href='@Url.Action("Administrator", "Administrators")'" role="button">Administration</a>
+                        </li>
+                    }
+                    @if (usr.RoleID == 1 || usr.RoleID == 2)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Maintenance</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Shippers", "Maintenance")'">Shipper</a>
+                                <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Suppliers", "Maintenance")'">Supplier</a>
+                                <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Customers", "Maintenance")'">Customer</a>
+                                <a class="dropdown-item" href="#" onclick="location.href='@Url.Action("Products", "Maintenance")'">Product</a>
+                            </div>
+                        </li>
+                    }
                     <li class="nav-item dropdown">
                         <a class="nav-link active" href="#" onclick="location.href='@Url.Action("Index", "Order")'">Order</a>
                     </li>
@@ -49,9 +91,7 @@
             <p>&copy;2018 - Senior Project Fall</p>
         </footer>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/popper")
-    @Scripts.Render("~/bundles/bootstrap")
+
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         $('.tree-toggle').click(function () {
